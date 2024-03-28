@@ -6,7 +6,6 @@ export class SceneHandler {
   renderer: THREE.WebGLRenderer;
   camera: THREE.Camera;
   raycaster: THREE.Raycaster;
-  // floorGeometry: THREE.BufferGeometry;
   position: THREE.BufferAttribute | THREE.InterleavedBufferAttribute;
   vertex: THREE.Vector3;
   time: number;
@@ -174,13 +173,6 @@ export class SceneHandler {
       this.raycaster.ray.origin.copy(this.controls.getObject().position);
       this.raycaster.ray.origin.y -= 10;
 
-      // const intersections = this.raycaster.intersectObjects(
-      //   this.objects,
-      //   false
-      // );
-
-      // const onObject = intersections.length > 0;
-
       const delta = (this.time - this.prevTime) / 1000;
 
       this.velocity.x -= this.velocity.x * 10.0 * delta;
@@ -196,11 +188,6 @@ export class SceneHandler {
         this.velocity.z -= this.direction.z * 400.0 * delta;
       if (this.moveLeft || this.moveRight)
         this.velocity.x -= this.direction.x * 400.0 * delta;
-
-      // if (onObject === true) {
-      //   this.velocity.y = Math.max(0, this.velocity.y);
-      //   this.canJump = true;
-      // }
 
       this.controls.moveRight(-this.velocity.x * delta);
       this.controls.moveForward(-this.velocity.z * delta);
