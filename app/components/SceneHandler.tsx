@@ -34,6 +34,7 @@ export class SceneHandler {
       1000
     );
     this.camera.position.y = 10;
+    this.camera.lookAt(new THREE.Vector3(-1, 10, 0));
     document.body.addEventListener('click', () => {
       this.controls.lock();
     });
@@ -45,11 +46,17 @@ export class SceneHandler {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    const light = new THREE.PointLight(0xffffff, 20);
-    light.position.set(0.8, 1.4, 1.0);
+    const light = new THREE.PointLight(0xffffff, 13000);
+    light.lookAt(new THREE.Vector3(0, 0, 0));
+    light.position.set(50, 50, 50);
+    light.castShadow = true;
     this.scene.add(light);
-    const light2 = new THREE.PointLight(0xffffff, 50);
-    light2.position.set(-5, 0, -1);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+    this.scene.add(ambientLight);
+    const light2 = new THREE.PointLight(0xffffff, 1000);
+    light2.position.set(-50, 0, -50);
+    light2.lookAt(new THREE.Vector3(0, 0, 0));
+    light2.castShadow = true;
     this.scene.add(light2);
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -138,25 +145,10 @@ export class SceneHandler {
     floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
 
     this.position = floorGeometry.attributes.position;
-    const colorsFloor = [];
-    const color = new THREE.Color();
 
-    for (let i = 0, l = this.position.count; i < l; i++) {
-      color.setHSL(
-        Math.random() * 0.3 + 0.5,
-        0.75,
-        Math.random() * 0.25 + 0.75,
-        THREE.SRGBColorSpace
-      );
-      colorsFloor.push(color.r, color.g, color.b);
-    }
-
-    floorGeometry.setAttribute(
-      'color',
-      new THREE.Float32BufferAttribute(colorsFloor, 3)
-    );
-
-    const floorMaterial = new THREE.MeshBasicMaterial({ vertexColors: true });
+    const floorMaterial = new THREE.MeshBasicMaterial({
+      color: 0x3d392c,
+    });
 
     this.floor = new THREE.Mesh(floorGeometry, floorMaterial);
     this.scene.add(this.floor);
@@ -164,7 +156,7 @@ export class SceneHandler {
     this.scene.add(this.controls.getObject());
 
     // this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    // this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
     // this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
   animate() {
@@ -178,7 +170,7 @@ export class SceneHandler {
       this.velocity.x -= this.velocity.x * 10.0 * delta;
       this.velocity.z -= this.velocity.z * 10.0 * delta;
 
-      this.velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+      this.velocity.y -= 9.8 * 150.0 * delta; // 100.0 = mass
 
       this.direction.z = Number(this.moveForward) - Number(this.moveBackward);
       this.direction.x = Number(this.moveRight) - Number(this.moveLeft);
